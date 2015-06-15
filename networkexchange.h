@@ -7,29 +7,6 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 
-class UserInfo
-{
-public:
-    UserInfo() {
-
-    }
-    QString firstName;
-    QString lastName;
-    QString middleName;
-    bool canAddIssue;
-    bool canEditIssue;
-    bool canChangeIssueStatus;
-    bool canShutdownApp;
-    bool canViewIssueReportLocal;
-    bool canViewEmployeesList;
-    bool canViewIssueReportOwned;
-    bool canViewAwsListOwned;
-    bool canViewWorkChangesOwned;
-    bool canFillControlList;
-    bool canManageOrgStructure;
-
-
-};
 
 
 class NetworkExchange : public QObject
@@ -37,11 +14,11 @@ class NetworkExchange : public QObject
     Q_OBJECT
     Q_PROPERTY(QString host READ host WRITE setHost NOTIFY hostChanged)
     Q_PROPERTY(qint16 port READ port WRITE setPort NOTIFY portChanged)
-    Q_PROPERTY(bool allowAnonymous READ allowAnonymous  NOTIFY anonymousModeChanged)
+
 
 public:
     explicit NetworkExchange(QObject *parent = 0);
-
+   QNetworkAccessManager *nam;
     QString host() const
     {
         return m_host;
@@ -57,21 +34,21 @@ public:
     {
         return m_allowAnonymous;
     }
-    const UserInfo* userInfo(){
-        return ui;
-    }
+
+
 
 signals:
     void hostChanged(QString host);
-    void anonymousModeChanged(bool allow);
+    void workSpaceChanged(QString wsid,QString armId);
     void portChanged(qint16 port);
-    void userInfoReceived(const UserInfo *ui);
-    void authFailed();
+
+
+    void networkError();
 private slots:
-    void getUserInfo();
+
 private:
-    UserInfo *ui;
-    QNetworkAccessManager *nam;
+
+
     QString m_host;
     qint16 m_port;
     QNetworkCookieJar *cj;
@@ -95,8 +72,8 @@ public slots:
         m_port = port;
         emit portChanged(port);
     }
-    void getSettings();
-    void login(QString login, QString password);
+    void registerAWS();
+
 };
 
 #endif // NETWORKEXCHANGE_H

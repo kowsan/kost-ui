@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui network
+QT       += core gui network webkitwidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -18,16 +18,22 @@ SOURCES += main.cpp\
     networkexchange.cpp \
     issueswidget.cpp \
     loginwindow.cpp \
-    userwidget.cpp
+    settingsdialog.cpp \
+    nonregisteredawsui.cpp
 
 HEADERS  += mainwindow.h \
     settings.h \
     networkexchange.h \
     issueswidget.h \
     loginwindow.h \
-    userwidget.h
+    settingsdialog.h \
+    nonregisteredawsui.h
 
 FORMS    += mainwindow.ui \
     issueswidget.ui \
     loginwindow.ui \
-    userwidget.ui
+    settingsdialog.ui \
+    nonregisteredawsui.ui
+
+RESOURCES += \
+    res.qrc

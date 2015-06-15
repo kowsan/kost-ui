@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>res/1433976114_logout.png</file>
+        <file>res/1433976140_login.png</file>
+        <file>res/1433976584_services.png</file>
+    </qresource>
+</RCC>

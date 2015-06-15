@@ -22,3 +22,26 @@ QString Settings::appId()
 
 }
 
+QString Settings::serverHost()
+{
+   QSettings sets(appPath(),QSettings::IniFormat);
+   return sets.value("serverhost","127.0.0.1").toString();
+}
+
+qint16 Settings::serverPort()
+{
+   QSettings sets(appPath(),QSettings::IniFormat);
+   return sets.value("serverport","3000").toInt();
+}
+
+void Settings::setServerHost(const QString &host)
+{
+    QSettings sets(appPath(),QSettings::IniFormat);
+    sets.setValue("serverhost",host);
+}
+
+void Settings::setServerPort(const qint16 &port)
+{
+    QSettings sets(appPath(),QSettings::IniFormat);
+     sets.setValue("serverport",port);
+}

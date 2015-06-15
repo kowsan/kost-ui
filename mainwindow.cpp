@@ -3,46 +3,79 @@
 #include "issueswidget.h"
 #include "loginwindow.h"
 
+void MainWindow::init()
+{
+    nex->setHost(Settings::serverHost());
+    nex->setPort(Settings::serverPort());
+}
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     nex=new NetworkExchange(this);
-    nex->setHost("127.0.0.1");
-    nex->setPort(3000);
+      ui->webView->page()->setNetworkAccessManager(nex->nam);
+    init();
     tmr=new QTimer(this);
     tmr->setInterval(20000);
     tmr->start();
-    connect(tmr,SIGNAL(timeout()),nex,SLOT(getSettings()));
-    connect(nex,SIGNAL(userInfoReceived(const UserInfo*)),this,SLOT(rebuildUserSpace(const UserInfo*)));
-    connect(nex,SIGNAL(anonymousModeChanged(bool)),this,SLOT(showHideAnonymous(bool)));
-    nex->getSettings();
+   // connect(tmr,SIGNAL(timeout()),nex,SLOT(registerAWS()));
+    connect(nex,SIGNAL(workSpaceChanged(QString,QString)),this,SLOT(onARMStatusChanged(QString,QString)));
+
+    nex->registerAWS();
+
+
+
+    connect(ui->actionLogin,SIGNAL(triggered(bool)),this,SLOT(showLoginDialog()));
+#ifdef Q_OS_OSX
+    ui->actionSettings->setShortcut(QKeySequence::Preferences);
+#else
+    ui->actionSettings->setShortcut(QKeySequence("Ctrl+E"));
+#endif
+    connect(ui->actionSettings,SIGNAL(triggered(bool)),this,SLOT(showSettings()));
     //nex->login("admin","admin");
 
 }
 
-void MainWindow::rebuildUserSpace(const UserInfo *uinfo){
-    //Manage User section
-    qDebug()<<"perm processed";
-    QList <UserWidget*> iw=ui->tabWidget->findChildren<UserWidget*> ();
-    if (uinfo->canManageOrgStructure) {
+void MainWindow::onARMStatusChanged(const QString &workSpaceId,const QString &id)
+{
 
-        if (iw.count()==0){
-            UserWidget *iw = new UserWidget(ui->tabWidget);
+    if (workSpaceId=="0" )
+    {
+        ui->appStackedWidget->setCurrentWidget(ui->nrWidget);
+        ui->nrWidget->setArmId(id);
 
-            ui->tabWidget->addTab(iw,"Пользователи");
-        }
-    } else {
-        if (iw.count()>0) {
-            // iw.first()->deleteLater();// deleteLater();
-            qDeleteAll(iw);
-            iw.clear();
+    }
+    else
+    {
+        this->setWindowTitle(QString("КСОТ: \"Рабочее место\" ID: %1").arg(workSpaceId));
+        ui->appStackedWidget->setCurrentWidget(ui->mainview);
+        QUrl u;
+        qDebug()<<ui->webView->url();
+
+        if (ui->webView->url()==QUrl("about:blank"))
+        {
+            u.setScheme("http");
+            u.setHost(Settings::serverHost());
+            u.setPort(Settings::serverPort());
+            ui->webView->load(u);
         }
     }
 
-
 }
+
+
+void MainWindow::showSettings()
+{
+    SettingsDialog dlg;
+    if (dlg.exec()==QDialog::Accepted){
+        this->init();
+    }
+}
+
+
+
 
 
 void MainWindow::showLoginDialog()
@@ -54,27 +87,7 @@ void MainWindow::showLoginDialog()
     lw.exec();
 }
 
-void MainWindow::showHideAnonymous(bool e)
-{
 
-    QList <IssuesWidget*> iw=ui->tabWidget->findChildren<IssuesWidget*> ();
-    if (e) {
-
-        if (iw.count()==0){
-            IssuesWidget *iw = new IssuesWidget(ui->tabWidget);
-            connect(iw,SIGNAL(loginRequested()),this,SLOT(showLoginDialog()));
-            ui->tabWidget->insertTab(0,iw,"Нарушения");
-        }
-    } else {
-        if (iw.count()>0) {
-            // iw.first()->deleteLater();// deleteLater();
-            qDeleteAll(iw);
-            iw.clear();
-        }
-    }
-
-
-}
 
 MainWindow::~MainWindow()
 {
