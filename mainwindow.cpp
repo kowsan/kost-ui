@@ -21,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent) :
     tmr->setInterval(20000);
     tmr->start();
    // connect(tmr,SIGNAL(timeout()),nex,SLOT(registerAWS()));
-    connect(nex,SIGNAL(workSpaceChanged(QString,QString)),this,SLOT(onARMStatusChanged(QString,QString)));
+   connect(nex,SIGNAL(workSpaceChanged(QString,QString)),this,SLOT(onARMStatusChanged(QString,QString)));
 
     nex->registerAWS();
 
@@ -41,14 +41,14 @@ MainWindow::MainWindow(QWidget *parent) :
 void MainWindow::onARMStatusChanged(const QString &workSpaceId,const QString &id)
 {
 
-    if (workSpaceId=="0" )
-    {
-        ui->appStackedWidget->setCurrentWidget(ui->nrWidget);
-        ui->nrWidget->setArmId(id);
+//    if (workSpaceId=="0" )
+//    {
+//        ui->appStackedWidget->setCurrentWidget(ui->nrWidget);
+//        ui->nrWidget->setArmId(id);
 
-    }
-    else
-    {
+//    }
+//    else
+//    {
         this->setWindowTitle(QString("КСОТ: \"Рабочее место\" ID: %1").arg(workSpaceId));
         ui->appStackedWidget->setCurrentWidget(ui->mainview);
         QUrl u;
@@ -61,7 +61,7 @@ void MainWindow::onARMStatusChanged(const QString &workSpaceId,const QString &id
             u.setPort(Settings::serverPort());
             ui->webView->load(u);
         }
-    }
+//    }
 
 }
 

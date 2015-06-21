@@ -21,9 +21,9 @@
     <item row="0" column="0">
      <widget class="QStackedWidget" name="appStackedWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
-      <widget class="NonRegisteredAWSUi" name="nrWidget" native="true">
+      <widget class="NonRegisteredAWSUi" name="nrWidget">
        <layout class="QGridLayout" name="gridLayout_2"/>
       </widget>
       <widget class="QWidget" name="mainview">

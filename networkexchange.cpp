@@ -7,6 +7,7 @@ NetworkExchange::NetworkExchange(QObject *parent) : QObject(parent)
     tmr=new QTimer(this);
     tmr->setInterval(10000);
     tmr->start();
+    //connect(nam->,SIGNAL())
 
 }
 
