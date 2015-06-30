@@ -8,6 +8,9 @@ NetworkExchange::NetworkExchange(QObject *parent) : QObject(parent)
     tmr->setInterval(10000);
     tmr->start();
     //connect(nam->,SIGNAL())
+    m_armId=0;
+    m_workSpaceId=0;
+    m_allowAnonymous=NULL;
 
 }
 
@@ -46,8 +49,24 @@ void NetworkExchange::registerAWS()
         QJsonDocument d=QJsonDocument::fromJson(ba);
         int wsid=d.object().value("work_space_id").toInt();
         int armid=d.object().value("id").toInt();
+        bool deny_close=d.object().value("deny_close").toBool(false);
+        emit denyCloseChanged(deny_close);
         qDebug()<<"work_space_id:"<<wsid<<"arm id"<<armid;
-        emit workSpaceChanged(QString::number(wsid),QString::number(armid));
+
+
+        if (m_armId != armid || m_workSpaceId!=wsid)
+        {
+            m_armId=armid;
+            m_workSpaceId=wsid;
+            emit workSpaceChanged(QString::number(wsid),QString::number(armid));
+        }
+        bool _allowAnon=d.object().value("allow_anonymous").toBool(false);
+        if (_allowAnon!= m_allowAnonymous)
+        {
+            emit anonymousChanged();
+            m_allowAnonymous=_allowAnon;
+        }
+
         return;
 
     }

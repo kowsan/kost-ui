@@ -18,7 +18,7 @@ class NetworkExchange : public QObject
 
 public:
     explicit NetworkExchange(QObject *parent = 0);
-   QNetworkAccessManager *nam;
+    QNetworkAccessManager *nam;
     QString host() const
     {
         return m_host;
@@ -38,21 +38,24 @@ public:
 
 
 signals:
+    void anonymousChanged();
     void hostChanged(QString host);
     void workSpaceChanged(QString wsid,QString armId);
     void portChanged(qint16 port);
+    void denyCloseChanged(bool isDeny);
 
 
     void networkError();
 private slots:
 
 private:
-
+    int m_armId,m_workSpaceId ;
+    bool m_allowAnonymous;
 
     QString m_host;
     qint16 m_port;
     QNetworkCookieJar *cj;
-    bool m_allowAnonymous;
+
 
     QTimer *tmr;
 public slots:
