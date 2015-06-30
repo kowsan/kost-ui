@@ -36,6 +36,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(nex,SIGNAL(workSpaceChanged(QString,QString)),this,SLOT(onARMStatusChanged(QString,QString)));
     connect(nex,SIGNAL(denyCloseChanged(bool)),this,SLOT(setDenyClose(bool)));
     connect(nex,SIGNAL(anonymousChanged()),ui->webView,SLOT(reload()));
+     connect(nex,SIGNAL(anonymousChanged()),this,SLOT(loadArm()));
     nex->registerAWS();
 
 
