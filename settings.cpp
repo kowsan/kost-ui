@@ -21,6 +21,22 @@ QString Settings::appId()
    return appId;
 
 }
+bool Settings::isAutostartWinEnabled()
+{
+    QSettings settings("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",QSettings::NativeFormat);
+    return settings.value("MOSMON","").toString().size()>0;
+}
+
+void Settings::setAutostartWin(const bool &startupEnabled)
+{
+    QSettings settings("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",QSettings::NativeFormat);
+    if (startupEnabled) {
+        settings.setValue("ksotui", "\""+QDir::toNativeSeparators(qApp->applicationFilePath())+"\"");
+    } else {
+        settings.remove("ksotui");
+
+    }
+}
 
 QString Settings::serverHost()
 {

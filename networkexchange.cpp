@@ -4,13 +4,13 @@ NetworkExchange::NetworkExchange(QObject *parent) : QObject(parent)
 {
     m_allowAnonymous=false;
     nam=new QNetworkAccessManager(this);
-    tmr=new QTimer(this);
-    tmr->setInterval(10000);
-    tmr->start();
+
+
     //connect(nam->,SIGNAL())
     m_armId=0;
     m_workSpaceId=0;
     m_allowAnonymous=NULL;
+
 
 }
 
@@ -41,34 +41,42 @@ void NetworkExchange::registerAWS()
     QEventLoop loop;
     connect(reply,SIGNAL(finished()),&loop,SLOT(quit()));
     loop.exec();
-    QByteArray ba=reply->readAll();
-    int sc=reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-    qDebug()<<"server response"<<reply->errorString()<<ba<<sc;
-    if (sc==201)
+    if (reply->error()==QNetworkReply::NoError)
     {
-        QJsonDocument d=QJsonDocument::fromJson(ba);
-        int wsid=d.object().value("work_space_id").toInt();
-        int armid=d.object().value("id").toInt();
-        bool deny_close=d.object().value("deny_close").toBool(false);
-        emit denyCloseChanged(deny_close);
-        qDebug()<<"work_space_id:"<<wsid<<"arm id"<<armid;
 
-
-        if (m_armId != armid || m_workSpaceId!=wsid)
+        QByteArray ba=reply->readAll();
+        int sc=reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+        qDebug()<<"server response"<<reply->errorString()<<ba<<sc;
+        if (sc==201)
         {
-            m_armId=armid;
-            m_workSpaceId=wsid;
-            emit workSpaceChanged(QString::number(wsid),QString::number(armid));
-        }
-        bool _allowAnon=d.object().value("allow_anonymous").toBool(false);
-        if (_allowAnon!= m_allowAnonymous)
-        {
-            emit anonymousChanged();
-            m_allowAnonymous=_allowAnon;
-        }
+            QJsonDocument d=QJsonDocument::fromJson(ba);
+            int wsid=d.object().value("work_space_id").toInt();
+            int armid=d.object().value("id").toInt();
+            bool deny_close=d.object().value("deny_close").toBool(false);
+            emit denyCloseChanged(deny_close);
+            qDebug()<<"work_space_id:"<<wsid<<"arm id"<<armid;
 
-        return;
 
+            if (m_armId != armid || m_workSpaceId!=wsid)
+            {
+                m_armId=armid;
+                m_workSpaceId=wsid;
+                emit workSpaceChanged(QString::number(wsid),QString::number(armid));
+            }
+            bool _allowAnon=d.object().value("allow_anonymous").toBool(false);
+            if (_allowAnon!= m_allowAnonymous)
+            {
+                emit anonymousChanged();
+                m_allowAnonymous=_allowAnon;
+            }
+
+            return;
+
+        }
+    }
+    else
+    {
+    emit networkError(reply->errorString());
     }
 }
 

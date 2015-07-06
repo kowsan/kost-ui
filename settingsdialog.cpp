@@ -21,6 +21,14 @@ void SettingsDialog::save(){
 
      Settings::setServerHost(ui->serverEdit->text());
      Settings::setServerPort(ui->portEdit->value());
+     if (ui->autoStartGip->isChecked())
+     {
+
+     }
+     else
+     {
+
+     }
 }
 SettingsDialog::~SettingsDialog()
 {

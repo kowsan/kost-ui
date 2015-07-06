@@ -12,6 +12,9 @@ public:
     static void setServerHost(const QString &host);
 
     static void setServerPort(const qint16 &port);
+
+    static  void setAutostartWin(const bool &startupEnabled);
+    static bool isAutostartWinEnabled();
 };
 
 #endif // SETTINGS_H

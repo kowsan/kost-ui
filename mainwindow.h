@@ -31,6 +31,9 @@ private slots:
     void onDenyCloseChanged(bool isDeny);
     void onARMStatusChanged(const QString &workSpaceId, const QString &id);
     void setDenyClose(bool value);
+    void showLoadProgress(int progress);
+    void showLoadFinished(bool ok);
+    void showLoadStart();
 private:
     Ui::MainWindow *ui;
     NetworkExchange *nex;

@@ -5,6 +5,7 @@
 
 #include <QCloseEvent>
 #include <QMessageBox>
+#include <QWebPage>
 
 void MainWindow::init()
 {
@@ -12,6 +13,7 @@ void MainWindow::init()
     nex->setPort(Settings::serverPort());
     m_isDenyClose=false;
     this->setWindowFlags(Qt::WindowStaysOnTopHint);
+    this->show();
 }
 
 
@@ -28,6 +30,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     nex=new NetworkExchange(this);
     ui->webView->page()->setNetworkAccessManager(nex->nam);
+
     init();
     tmr=new QTimer(this);
     tmr->setInterval(20000);
@@ -37,7 +40,12 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(nex,SIGNAL(denyCloseChanged(bool)),this,SLOT(setDenyClose(bool)));
     connect(nex,SIGNAL(anonymousChanged()),ui->webView,SLOT(reload()));
      connect(nex,SIGNAL(anonymousChanged()),this,SLOT(loadArm()));
+     connect(nex,SIGNAL(networkError(QString)),ui->label,SLOT(setText(QString)));
     nex->registerAWS();
+    connect(ui->webView->page(),SIGNAL(loadProgress(int)),this,SLOT(showLoadProgress(int)));
+    connect(ui->webView->page(),SIGNAL(loadFinished(bool)),this,SLOT(showLoadFinished(bool)));
+
+
 
 
 
@@ -52,20 +60,38 @@ MainWindow::MainWindow(QWidget *parent) :
 
 }
 
+void MainWindow::showLoadStart()
+{
+   ui->progressBar->show();
+}
+
+void MainWindow::showLoadFinished(bool ok)
+{
+   if (ok){
+       ui->progressBar->hide();
+   } else {
+       qDebug()<<"Page load with errors";
+   }
+}
+
+void MainWindow::showLoadProgress(int progress)
+{
+ ui->progressBar->setValue(progress);
+}
+
 void MainWindow::loadArm()
 {
     QUrl u;
     qDebug()<<ui->webView->url();
 
-    if (ui->webView->url()==QUrl("about:blank"))
-    {
+
         u.setScheme("http");
         u.setHost(Settings::serverHost());
         u.setPort(Settings::serverPort());
         ui->webView->load(u);
-    } else {
-        ui->webView->reload();
-    }
+
+    //    ui->webView->reload();
+
 
 }
 
@@ -105,7 +131,10 @@ void MainWindow::showSettings()
 {
     SettingsDialog dlg;
     if (dlg.exec()==QDialog::Accepted){
+        tmr->stop();
         this->init();
+        tmr->start();
+        loadArm();
     }
 }
 

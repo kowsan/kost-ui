@@ -43,9 +43,7 @@ signals:
     void workSpaceChanged(QString wsid,QString armId);
     void portChanged(qint16 port);
     void denyCloseChanged(bool isDeny);
-
-
-    void networkError();
+    void networkError( QString error);
 private slots:
 
 private:
@@ -57,7 +55,6 @@ private:
     QNetworkCookieJar *cj;
 
 
-    QTimer *tmr;
 public slots:
     void setHost(QString host)
     {
