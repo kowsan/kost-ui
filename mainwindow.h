@@ -5,6 +5,7 @@
 #include "networkexchange.h"
 #include "nonregisteredawsui.h"
 #include "settingsdialog.h"
+#include <QPixmap>
 
 
 namespace Ui {
@@ -34,6 +35,8 @@ private slots:
     void showLoadProgress(int progress);
     void showLoadFinished(bool ok);
     void showLoadStart();
+    void onNetworkError(QString error);
+    void onNetworkOk();
 private:
     Ui::MainWindow *ui;
     NetworkExchange *nex;

@@ -37,3 +37,10 @@ FORMS    += mainwindow.ui \
 
 RESOURCES += \
     res.qrc
+
+DISTFILES += \
+    res/myapp.rc \
+    icon.ico
+
+#RC_FILE = myapp.rc
+RC_ICONS = icon.ico

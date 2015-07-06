@@ -28,6 +28,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->progressBar->hide();
     nex=new NetworkExchange(this);
     ui->webView->page()->setNetworkAccessManager(nex->nam);
 
@@ -39,8 +40,11 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(nex,SIGNAL(workSpaceChanged(QString,QString)),this,SLOT(onARMStatusChanged(QString,QString)));
     connect(nex,SIGNAL(denyCloseChanged(bool)),this,SLOT(setDenyClose(bool)));
     connect(nex,SIGNAL(anonymousChanged()),ui->webView,SLOT(reload()));
-     connect(nex,SIGNAL(anonymousChanged()),this,SLOT(loadArm()));
-     connect(nex,SIGNAL(networkError(QString)),ui->label,SLOT(setText(QString)));
+    connect(nex,SIGNAL(anonymousChanged()),this,SLOT(loadArm()));
+    connect(nex,SIGNAL(networkError(QString)),this,SLOT(onNetworkError(QString)));
+    connect(nex,SIGNAL(networkOk()),this,SLOT(onNetworkOk()));
+
+
     nex->registerAWS();
     connect(ui->webView->page(),SIGNAL(loadProgress(int)),this,SLOT(showLoadProgress(int)));
     connect(ui->webView->page(),SIGNAL(loadFinished(bool)),this,SLOT(showLoadFinished(bool)));
@@ -60,23 +64,42 @@ MainWindow::MainWindow(QWidget *parent) :
 
 }
 
+void MainWindow::onNetworkOk()
+{
+    ui->statusLabel->setText(QString("Соединение установлено (%1:%2)").arg(Settings::serverHost()).arg(Settings::serverPort()));
+    QPixmap px;
+    px.load(":/res/free-23-128.png");
+    ui->iconLabel->setPixmap(px);
+
+}
+
+
+void MainWindow::onNetworkError(QString error)
+{
+   error="<span style='color:red'>"+error+"</span>";
+    ui->statusLabel->setText(QString(error+"(%1:%2)").arg(Settings::serverHost()).arg(Settings::serverPort()));
+    QPixmap px;
+    px.load(":/res/698395-icon-131-cloud-error-128.png");
+    ui->iconLabel->setPixmap(px);
+}
+
 void MainWindow::showLoadStart()
 {
-   ui->progressBar->show();
+    ui->progressBar->show();
 }
 
 void MainWindow::showLoadFinished(bool ok)
 {
-   if (ok){
-       ui->progressBar->hide();
-   } else {
-       qDebug()<<"Page load with errors";
-   }
+    if (ok){
+        ui->progressBar->hide();
+    } else {
+        qDebug()<<"Page load with errors";
+    }
 }
 
 void MainWindow::showLoadProgress(int progress)
 {
- ui->progressBar->setValue(progress);
+    ui->progressBar->setValue(progress);
 }
 
 void MainWindow::loadArm()
@@ -85,10 +108,10 @@ void MainWindow::loadArm()
     qDebug()<<ui->webView->url();
 
 
-        u.setScheme("http");
-        u.setHost(Settings::serverHost());
-        u.setPort(Settings::serverPort());
-        ui->webView->load(u);
+    u.setScheme("http");
+    u.setHost(Settings::serverHost());
+    u.setPort(Settings::serverPort());
+    ui->webView->load(u);
 
     //    ui->webView->reload();
 

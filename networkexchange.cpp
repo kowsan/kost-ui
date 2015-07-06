@@ -4,11 +4,12 @@ NetworkExchange::NetworkExchange(QObject *parent) : QObject(parent)
 {
     m_allowAnonymous=false;
     nam=new QNetworkAccessManager(this);
+    connect(nam,SIGNAL(finished(QNetworkReply*)),this,SLOT(OkorErrror(QNetworkReply*)));
 
 
-    //connect(nam->,SIGNAL())
-    m_armId=0;
-    m_workSpaceId=0;
+            //connect(nam->,SIGNAL())
+            m_armId=0;
+            m_workSpaceId=0;
     m_allowAnonymous=NULL;
 
 
@@ -17,7 +18,17 @@ NetworkExchange::NetworkExchange(QObject *parent) : QObject(parent)
 
 
 
-
+void NetworkExchange::OkorErrror(QNetworkReply *reply)
+{
+    if (reply->error()==QNetworkReply::NoError)
+    {
+        emit networkOk();
+    }
+    else
+    {
+        emit networkError(reply->errorString());
+    }
+}
 void NetworkExchange::registerAWS()
 {
     QNetworkRequest req;
@@ -44,6 +55,7 @@ void NetworkExchange::registerAWS()
     if (reply->error()==QNetworkReply::NoError)
     {
 
+        // emit networkOk();
         QByteArray ba=reply->readAll();
         int sc=reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
         qDebug()<<"server response"<<reply->errorString()<<ba<<sc;
@@ -76,8 +88,9 @@ void NetworkExchange::registerAWS()
     }
     else
     {
-    emit networkError(reply->errorString());
+        // emit networkError(reply->errorString());
     }
+    //reply->deleteLater();
 }
 
 

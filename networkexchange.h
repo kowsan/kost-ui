@@ -44,8 +44,10 @@ signals:
     void portChanged(qint16 port);
     void denyCloseChanged(bool isDeny);
     void networkError( QString error);
+    void networkOk();
 private slots:
 
+    void OkorErrror(QNetworkReply *reply);
 private:
     int m_armId,m_workSpaceId ;
     bool m_allowAnonymous;
