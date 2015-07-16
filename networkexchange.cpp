@@ -43,7 +43,9 @@ void NetworkExchange::registerAWS()
     qq.addQueryItem("name",QHostInfo::localHostName());
     QString u_name = qgetenv("USER");
     if (u_name.isEmpty())
+        //TODO fix russian name
         u_name = qgetenv("USERNAME");
+
     qDebug() <<"curetn user name"<< u_name;
     qq.addQueryItem("os_user",u_name);
     u.setQuery(qq);
