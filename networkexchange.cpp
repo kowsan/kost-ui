@@ -7,9 +7,9 @@ NetworkExchange::NetworkExchange(QObject *parent) : QObject(parent)
     connect(nam,SIGNAL(finished(QNetworkReply*)),this,SLOT(OkorErrror(QNetworkReply*)));
 
 
-            //connect(nam->,SIGNAL())
-            m_armId=0;
-            m_workSpaceId=0;
+    //connect(nam->,SIGNAL())
+    m_armId=0;
+    m_workSpaceId=0;
     m_allowAnonymous=NULL;
 
 
@@ -42,16 +42,17 @@ void NetworkExchange::registerAWS()
     qq.addQueryItem("os",QSysInfo::prettyProductName());
     qq.addQueryItem("name",QHostInfo::localHostName());
     QString u_name = qgetenv("USER");
-    if (u_name.isEmpty())
+    QByteArray un;
+    if (u_name.isEmpty()){
         //TODO fix russian name
-        QByteArray un = qgetenv("USERNAME");
+        un = qgetenv("USERNAME");
 
 #ifdef Q_OS_WIN
-    QTextCodec *c=QTextCodec::codecForLocale("cp-866");
-    u_name= c->toUnicode(un)
-#endif
+        QTextCodec *c=QTextCodec::codecForLocale("cp-1251");
+        u_name= c->toUnicode(un)
+        #endif
 
-
+    }
 
     qDebug() <<"curetn user name"<< u_name;
     qq.addQueryItem("os_user",u_name);
