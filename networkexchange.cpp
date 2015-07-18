@@ -44,7 +44,14 @@ void NetworkExchange::registerAWS()
     QString u_name = qgetenv("USER");
     if (u_name.isEmpty())
         //TODO fix russian name
-        u_name = qgetenv("USERNAME");
+        QByteArray un = qgetenv("USERNAME");
+
+#ifdef Q_OS_WIN
+    QTextCodec *c=QTextCodec::codecForLocale("cp-866");
+    u_name= c->toUnicode(un)
+#endif
+
+
 
     qDebug() <<"curetn user name"<< u_name;
     qq.addQueryItem("os_user",u_name);
