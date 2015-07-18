@@ -48,9 +48,9 @@ void NetworkExchange::registerAWS()
         un = qgetenv("USERNAME");
 
 #ifdef Q_OS_WIN
-        QTextCodec *c=QTextCodec::codecForLocale("cp-1251");
-        u_name= c->toUnicode(un)
-        #endif
+        QTextCodec *c=QTextCodec::codecForName("cp-1251");
+        u_name= c->toUnicode(un);
+#endif
 
     }
 
