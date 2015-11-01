@@ -1,5 +1,7 @@
 #include "settings.h"
 
+#include <QDesktopServices>
+
 QString appPath()
 {
     
@@ -27,6 +29,11 @@ bool Settings::isAutostartWinEnabled()
     return settings.value("ksotui","").toString().size()>0;
 }
 
+QString Settings::saveFilesPath(){
+    QSettings sets(appPath(),QSettings::IniFormat);
+    return sets.value("storagepath", QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first()+QDir::separator()+"KSOT").toString();
+
+}
 void Settings::setAutostartWin(const bool &startupEnabled)
 {
     QSettings settings("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",QSettings::NativeFormat);

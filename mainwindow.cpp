@@ -14,6 +14,7 @@ void MainWindow::init()
     m_isDenyClose=false;
     this->setWindowFlags(Qt::WindowStaysOnTopHint);
     this->show();
+    ui->iconLabel->hide();
 }
 
 
@@ -23,6 +24,42 @@ void MainWindow::setDenyClose(bool value)
 
 }
 
+void MainWindow::onFileRequest(QNetworkReply* reply){
+
+
+    QEventLoop loop;
+    connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
+    loop.exec();
+
+
+    if (reply->header(QNetworkRequest::ContentTypeHeader).toString()=="application/pdf")
+    {
+
+              QTemporaryFile tf;
+        qDebug()<<"pdf downloading";
+        QByteArray ba=reply->readAll();
+        qDebug()<<"Sz :"<<ba.size();
+        QString fn=reply->request().url().path().replace("/","_");;
+        qDebug()<<fn;
+QString z;
+        tf.setAutoRemove(false);
+        if(tf.open())
+        {
+            z=tf.fileName();
+            qDebug()<<z;
+            tf.write(ba);
+
+        }
+         tf.close();
+        QDir d;
+        d.mkpath(Settings::saveFilesPath());
+        tf.copy(Settings::saveFilesPath()+"/"+fn);
+        tf.remove();
+    }
+
+}
+
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -30,8 +67,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     ui->progressBar->hide();
     nex=new NetworkExchange(this);
-    ui->webView->page()->setNetworkAccessManager(nex->nam);
 
+    ui->webView->page()->setNetworkAccessManager(nex->nam);
+    connect(ui->webView->page(),SIGNAL(unsupportedContent(QNetworkReply*)),this,SLOT(onFileRequest(QNetworkReply*)));
+    ui->webView->page()->setForwardUnsupportedContent(true);
     init();
     tmr=new QTimer(this);
     tmr->setInterval(20000);
@@ -76,10 +115,11 @@ void MainWindow::onNetworkOk()
 
 void MainWindow::onNetworkError(QString error)
 {
-   error="<span style='color:red'>"+error+"</span>";
+    error="<span style='color:red'>"+error+"</span>";
     ui->statusLabel->setText(QString(error+"(%1:%2)").arg(Settings::serverHost()).arg(Settings::serverPort()));
     QPixmap px;
     px.load(":/res/698395-icon-131-cloud-error-128.png");
+
     ui->iconLabel->setPixmap(px);
 }
 

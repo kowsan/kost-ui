@@ -12,6 +12,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     this->setWindowIcon(QIcon(":/res/1433976584_services.png"));
     ui->serverEdit->setText(Settings::serverHost());
     ui->portEdit->setValue(Settings::serverPort());
+    ui->storagePath->setText(Settings::saveFilesPath());
 connect(this,SIGNAL(accepted()),this,SLOT(save()));
 }
 

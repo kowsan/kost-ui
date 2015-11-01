@@ -2,6 +2,7 @@
 #define SETTINGS_H
 #include <QtCore>
 #include <QSettings>
+#include <QStandardPaths>
 
 class Settings
 {
@@ -15,6 +16,7 @@ public:
 
     static  void setAutostartWin(const bool &startupEnabled);
     static bool isAutostartWinEnabled();
+    static QString saveFilesPath();
 };
 
 #endif // SETTINGS_H

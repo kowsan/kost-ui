@@ -14,6 +14,7 @@ int main(int argc, char *argv[])
 
     bool z=   a.installTranslator(&tr);
     qDebug()<<"translator installed" <<x<<z;
+    qDebug()<< QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first();
     //       QPalette darkPalette;
     //       darkPalette.setColor(QPalette::Window, QColor(53,53,53));
     //       darkPalette.setColor(QPalette::WindowText, Qt::white);
