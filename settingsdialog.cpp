@@ -13,23 +13,37 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     ui->serverEdit->setText(Settings::serverHost());
     ui->portEdit->setValue(Settings::serverPort());
     ui->storagePath->setText(Settings::saveFilesPath());
-connect(this,SIGNAL(accepted()),this,SLOT(save()));
+    connect(this,SIGNAL(accepted()),this,SLOT(save()));
 }
 
 
+void SettingsDialog::getSaveFolder()
+{
 
+
+    QString dir = QFileDialog::getExistingDirectory(this, "Выбор папки",
+                                                    "/home",
+                                                    QFileDialog::ShowDirsOnly
+                                                    | QFileDialog::DontResolveSymlinks);
+    if (!dir.isEmpty())
+    {
+
+
+        ui->storagePath->setText(QDir::toNativeSeparators(dir));
+    }
+}
 void SettingsDialog::save(){
 
-     Settings::setServerHost(ui->serverEdit->text());
-     Settings::setServerPort(ui->portEdit->value());
-     if (ui->autoStartGip->isChecked())
-     {
+    Settings::setServerHost(ui->serverEdit->text());
+    Settings::setServerPort(ui->portEdit->value());
+    if (ui->autoStartGip->isChecked())
+    {
 
-     }
-     else
-     {
+    }
+    else
+    {
 
-     }
+    }
 }
 SettingsDialog::~SettingsDialog()
 {
