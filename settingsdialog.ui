@@ -101,7 +101,7 @@
       <widget class="QLineEdit" name="storagePath"/>
      </item>
      <item>
-      <widget class="QToolButton" name="toolButton">
+      <widget class="QToolButton" name="selectFolder">
        <property name="text">
         <string>...</string>
        </property>

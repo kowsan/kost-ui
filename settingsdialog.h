@@ -2,6 +2,7 @@
 #define SETTINGSDIALOG_H
 
 #include <QDialog>
+#include <QFileDialog>
 
 namespace Ui {
 class SettingsDialog;
@@ -17,6 +18,7 @@ public:
 
 private slots:
     void save();
+    void getSaveFolder();
 private:
     Ui::SettingsDialog *ui;
 };

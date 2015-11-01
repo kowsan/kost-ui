@@ -35,13 +35,13 @@ void MainWindow::onFileRequest(QNetworkReply* reply){
     if (reply->header(QNetworkRequest::ContentTypeHeader).toString()=="application/pdf")
     {
 
-              QTemporaryFile tf;
+        QTemporaryFile tf;
         qDebug()<<"pdf downloading";
         QByteArray ba=reply->readAll();
         qDebug()<<"Sz :"<<ba.size();
         QString fn=reply->request().url().path().replace("/","_");;
         qDebug()<<fn;
-QString z;
+        QString z;
         tf.setAutoRemove(false);
         if(tf.open())
         {
@@ -50,7 +50,7 @@ QString z;
             tf.write(ba);
 
         }
-         tf.close();
+        tf.close();
         QDir d;
         d.mkpath(Settings::saveFilesPath());
         tf.copy(Settings::saveFilesPath()+"/"+fn);
