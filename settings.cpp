@@ -31,9 +31,16 @@ bool Settings::isAutostartWinEnabled()
 
 QString Settings::saveFilesPath(){
     QSettings sets(appPath(),QSettings::IniFormat);
-    return sets.value("storagepath", QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first()+QDir::separator()+"KSOT").toString();
+    return sets.value("storagepath", QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first()+"/"+"KSOT").toString();
 
 }
+
+void Settings::setSaveFolder(const QString &folder)
+{
+    QSettings sets(appPath(),QSettings::IniFormat);
+   sets.setValue("storagepath", folder);
+}
+
 void Settings::setAutostartWin(const bool &startupEnabled)
 {
     QSettings settings("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",QSettings::NativeFormat);

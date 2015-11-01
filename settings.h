@@ -17,6 +17,7 @@ public:
     static  void setAutostartWin(const bool &startupEnabled);
     static bool isAutostartWinEnabled();
     static QString saveFilesPath();
+    static void setSaveFolder(const QString &folder);
 };
 
 #endif // SETTINGS_H
