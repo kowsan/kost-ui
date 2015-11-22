@@ -75,3 +75,27 @@ void Settings::setServerPort(const qint16 &port)
     QSettings sets(appPath(),QSettings::IniFormat);
     sets.setValue("serverport",port);
 }
+
+void Settings::saveGeometry(const QByteArray &geom)
+{
+    QSettings sets(appPath(),QSettings::IniFormat);
+    sets.setValue("geometry",geom);
+}
+
+void Settings::saveState(const QByteArray &geom)
+{
+    QSettings sets(appPath(),QSettings::IniFormat);
+    sets.setValue("state",geom);
+}
+
+QByteArray Settings::geometry()
+{
+    QSettings sets(appPath(),QSettings::IniFormat);
+    return sets.value("geometry",QByteArray()).toByteArray();
+}
+
+QByteArray Settings::state()
+{
+    QSettings sets(appPath(),QSettings::IniFormat);
+    return sets.value("state",QByteArray()).toByteArray();
+}

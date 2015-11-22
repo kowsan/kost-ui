@@ -13,7 +13,12 @@ public:
     static void setServerHost(const QString &host);
 
     static void setServerPort(const qint16 &port);
+    static void saveGeometry(const QByteArray &geom);
+    static void saveState(const QByteArray &geom);
 
+
+    static QByteArray geometry();
+    static QByteArray state();
     static  void setAutostartWin(const bool &startupEnabled);
     static bool isAutostartWinEnabled();
     static QString saveFilesPath();

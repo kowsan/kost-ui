@@ -15,6 +15,7 @@ void MainWindow::init()
     this->setWindowFlags(Qt::WindowStaysOnTopHint);
     this->show();
     ui->iconLabel->hide();
+
 }
 
 
@@ -65,6 +66,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    this->restoreGeometry(Settings::geometry());
+    this->restoreState(Settings::state());
+    connect(ui->actionSettings,SIGNAL(triggered(bool)),this,SLOT(showSettings()));
     ui->progressBar->hide();
     nex=new NetworkExchange(this);
 
@@ -98,7 +102,7 @@ MainWindow::MainWindow(QWidget *parent) :
 #else
     ui->actionSettings->setShortcut(QKeySequence("Ctrl+E"));
 #endif
-    connect(ui->actionSettings,SIGNAL(triggered(bool)),this,SLOT(showSettings()));
+
     //nex->login("admin","admin");
 
 }
@@ -161,6 +165,8 @@ void MainWindow::loadArm()
 
 
 void MainWindow::closeEvent(QCloseEvent *ev){
+    Settings::saveGeometry(this->saveGeometry());
+    Settings::saveState(this->saveState());
     if (m_isDenyClose)
     {
         QMessageBox::warning(this,"Предупреждение","Закрытие приложения запрещено настройками сервера",QMessageBox::Ok);
@@ -168,6 +174,7 @@ void MainWindow::closeEvent(QCloseEvent *ev){
 
     } else
     {
+
         ev->accept();
     }
 }
