@@ -40,7 +40,8 @@ RESOURCES += \
 
 DISTFILES += \
     res/myapp.rc \
-    icon.ico
+    icon.ico \
+    setup.iss
 
 #RC_FILE = myapp.rc
 RC_ICONS = icon.ico

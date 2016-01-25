@@ -38,6 +38,7 @@ private slots:
     void onNetworkError(QString error);
     void onNetworkOk();
     void onFileRequest(QNetworkReply *reply);
+    void onLinkClicked(QUrl u);
 private:
     Ui::MainWindow *ui;
     NetworkExchange *nex;

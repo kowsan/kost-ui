@@ -56,7 +56,7 @@ void MainWindow::setDenyClose(bool value)
 
 void MainWindow::onFileRequest(QNetworkReply* reply){
 
-
+    qDebug()<<"File request:!";
     QEventLoop loop;
     connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
     loop.exec();
@@ -85,7 +85,32 @@ void MainWindow::onFileRequest(QNetworkReply* reply){
         d.mkpath(Settings::saveFilesPath());
         tf.copy(Settings::saveFilesPath()+"/"+fn);
         tf.remove();
+        return;
     }
+
+
+    QTemporaryFile tf;
+    qDebug()<<"pdf downloading";
+    QByteArray ba=reply->readAll();
+    qDebug()<<"Sz :"<<ba.size();
+    QString fn=reply->request().url().path().replace("/","_");;
+    qDebug()<<fn;
+    QString z;
+    tf.setAutoRemove(false);
+    if(tf.open())
+    {
+        z=tf.fileName();
+        qDebug()<<z;
+        tf.write(ba);
+
+    }
+    tf.close();
+    QDir d;
+    d.mkpath(Settings::saveFilesPath());
+    tf.copy(Settings::saveFilesPath()+"/"+fn);
+    tf.remove();
+    return;
+
 
 }
 
@@ -102,8 +127,11 @@ MainWindow::MainWindow(QWidget *parent) :
     nex=new NetworkExchange(this);
 
     ui->webView->page()->setNetworkAccessManager(nex->nam);
+    ui->webView->page()->settings()->setAttribute(QWebSettings::LocalStorageEnabled,true);
+     ui->webView->page()->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled,true);
     connect(ui->webView->page(),SIGNAL(unsupportedContent(QNetworkReply*)),this,SLOT(onFileRequest(QNetworkReply*)));
     ui->webView->page()->setForwardUnsupportedContent(true);
+    ui->webView->page()->setLinkDelegationPolicy(QWebPage::DontDelegateLinks);
     init();
     tmr=new QTimer(this);
     tmr->setInterval(20000);
@@ -119,6 +147,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     nex->registerAWS();
     checkAssignedIssues();
+    connect(ui->webView,SIGNAL(linkClicked(QUrl)),this,SLOT(onLinkClicked(QUrl)));
     connect(ui->webView->page(),SIGNAL(loadProgress(int)),this,SLOT(showLoadProgress(int)));
     connect(ui->webView->page(),SIGNAL(loadFinished(bool)),this,SLOT(showLoadFinished(bool)));
 
@@ -137,6 +166,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
 }
 
+void MainWindow::onLinkClicked(QUrl u)
+{
+    qDebug()<<"Link clicked:"<<u;
+    ui->webView->load(u);
+}
 void MainWindow::onNetworkOk()
 {
     ui->statusLabel->setText(QString("Соединение установлено (%1:%2)").arg(Settings::serverHost()).arg(Settings::serverPort()));
