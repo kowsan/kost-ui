@@ -18,6 +18,35 @@ void MainWindow::init()
 
 }
 
+void MainWindow::checkAssignedIssues()
+{
+    QNetworkRequest r;
+    QUrl u(ui->webView->url());
+    u.setPath("/issues/unreaded.json");
+    r.setUrl(u);
+    r.setRawHeader("X-UI","Y");
+    QNetworkReply *reply= ui->webView->page()->networkAccessManager()->get(r);
+    QEventLoop loop;
+    connect(reply,SIGNAL(finished()),&loop,SLOT(quit()));
+    loop.exec();
+
+    QByteArray ba=reply->readAll();
+    bool authOk=reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt()==200;
+    if (authOk){
+        QJsonDocument doc=QJsonDocument::fromJson(ba);
+
+        int y=doc.object().value("count").toInt();
+        qDebug()<<"Assigned issues : "<<ba<<y;
+        if (y> 0)
+        {
+            qApp->alert(this,10000);
+        }
+    }
+
+    QTimer::singleShot(10000,this,SLOT(checkAssignedIssues()));
+    reply->deleteLater();
+}
+
 
 void MainWindow::setDenyClose(bool value)
 {
@@ -89,6 +118,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     nex->registerAWS();
+    checkAssignedIssues();
     connect(ui->webView->page(),SIGNAL(loadProgress(int)),this,SLOT(showLoadProgress(int)));
     connect(ui->webView->page(),SIGNAL(loadFinished(bool)),this,SLOT(showLoadFinished(bool)));
 
@@ -156,6 +186,7 @@ void MainWindow::loadArm()
     u.setHost(Settings::serverHost());
     u.setPort(Settings::serverPort());
     ui->webView->load(u);
+
 
     //    ui->webView->reload();
 

@@ -77,7 +77,13 @@ void NetworkExchange::registerAWS()
             bool deny_close=d.object().value("deny_close").toBool(false);
             emit denyCloseChanged(deny_close);
             qDebug()<<"work_space_id:"<<wsid<<"arm id"<<armid;
+//FIXME parse times
+            QJsonValue arr=d.object().value("comment");
 
+            QJsonDocument dcs=QJsonDocument::fromVariant(arr);
+            qDebug()<<"Turns info : "<<arr<<dcs;
+
+//            QJsonArray
 
             if (m_armId != armid || m_workSpaceId!=wsid)
             {

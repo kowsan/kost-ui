@@ -24,10 +24,10 @@ public:
 
 
 private slots:
-
+    void checkAssignedIssues();
     void showLoginDialog();
     void loadArm();
- // void loadARM(QUrl u);
+    // void loadARM(QUrl u);
     void showSettings();
     void onDenyCloseChanged(bool isDeny);
     void onARMStatusChanged(const QString &workSpaceId, const QString &id);
